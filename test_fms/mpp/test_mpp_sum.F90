@@ -27,11 +27,10 @@ program test_mpp_sum
 #include <fms_platform.h>
 
   use mpp_mod, only : mpp_init, mpp_pe, mpp_npes, mpp_root_pe
-  use mpp_mod, only : mpp_sync, mpp_declare_pelist, mpp_set_current_pelist
-  use mpp_mod, only : mpp_set_stack_size
+  use mpp_mod, only : mpp_sync
+  use mpp_mod, only : mpp_set_stack_size, mpp_init_test_requests_allocated
   use mpp_mod, only : mpp_sum, mpp_exit
   use mpp_mod, only : mpp_error, FATAL
-  use mpp_io_mod, only: mpp_io_init, mpp_flush
 
   implicit none
 
@@ -41,8 +40,7 @@ program test_mpp_sum
   integer                                      :: i, pe, npes, root
   integer, allocatable, dimension(:)           :: pelist
 
-  call mpp_init()
-  call mpp_io_init()
+  call mpp_init(mpp_init_test_requests_allocated)
   call mpp_set_stack_size(3145746)
   pe = mpp_pe()
   npes = mpp_npes()
