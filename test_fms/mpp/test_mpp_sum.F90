@@ -27,9 +27,9 @@ program test_mpp_sum
 #include <fms_platform.h>
 
   use mpp_mod, only : mpp_init, mpp_pe, mpp_npes, mpp_root_pe
-  use mpp_mod, only : mpp_sync
+  use mpp_mod, only : mpp_sync, mpp_declare_pelist, mpp_set_current_pelist
   use mpp_mod, only : mpp_set_stack_size
-  use mpp_mod, only : mpp_sum
+  use mpp_mod, only : mpp_sum, mpp_exit
   use mpp_mod, only : mpp_error, FATAL
   use mpp_io_mod, only: mpp_io_init, mpp_flush
 
@@ -38,15 +38,28 @@ program test_mpp_sum
   integer                                      :: n
   real(FLOAT_KIND), allocatable, dimension(:)  :: a4, b4, c4
   real(DOUBLE_KIND), allocatable, dimension(:) :: a8, b8, c8
-  integer                                      :: i, pe, npes, root, pelist(3)
+  integer                                      :: i, pe, npes, root
+  integer, allocatable, dimension(:)           :: pelist
 
   call mpp_init()
   call mpp_io_init()
   call mpp_set_stack_size(3145746)
-
   pe = mpp_pe()
   npes = mpp_npes()
   root = mpp_root_pe()
+
+  if( pe.EQ.root ) print *, '------------------> Calling test_mpp_sum <------------------'
+    call test_mpp_sum_dim1()
+    call test_mpp_sum_pelist()
+    call test_mpp_sum_large()
+  if( pe.EQ.root ) print *, '------------------> Finished test_mpp_sum <------------------'
+
+  call mpp_exit()
+
+contains
+
+  subroutine test_mpp_sum_dim1()
+
 ! Verify that mpp_sum calculates the sum for array with dim=1
   n=1
   allocate( a4(n), a8(n), b4(npes), b8(npes), c4(n), c8(n))
@@ -67,29 +80,37 @@ program test_mpp_sum
   endif
   deallocate(a4, b4, c4, a8, b8, c8)
 
+  end subroutine test_mpp_sum_dim1
+
+  subroutine test_mpp_sum_pelist()
+
 ! Verify mpp_sum accurately sums from select list of pes
-  if ( npes .GE. 5 ) then
-    allocate( a4(n), a8(n), b4(npes), b8(npes), c4(n), c8(n))
-    pelist = (/0, 2, 4/)
-    a4 = real(pe+1, kind=FLOAT_KIND)
-    a8 = real(pe+1, kind=DOUBLE_KIND)
-    print *, a4
-    call mpp_sync()
+  allocate( a4(n), a8(n), b4(npes), b8(npes), c4(n), c8(n))
+  allocate( pelist(0:npes-1) )
+
+  a4 = real(pe+1, kind=FLOAT_KIND)
+  a8 = real(pe+1, kind=DOUBLE_KIND)
+  call mpp_sync()
+  if (pe .LE. npes-2) then
+    pelist = (/(i,i=0,npes-2)/)
+    if (pe .EQ. root) print *,'PE: ',mpp_pe(),' pelist: ',pelist(:)
     call mpp_sum(a4(1:n),n, pelist=pelist)
     call mpp_sum(a8(1:n),n, pelist=pelist)
-   if (pe .EQ. root) then
-      b4 = real(pelist, kind=FLOAT_KIND)
-      b8 = real(pelist, kind=DOUBLE_KIND)
-      c4 = 9
-      c8 = 9
-      print *, b4
-      print *, a4
-      print *, c4
-      if (a4(1) .ne. c4(1)) call mpp_error(FATAL, "Real4 with pelist: mpp_sum differs from fortran intrinsic sum")
-      if (a8(1) .ne. c8(1)) call mpp_error(FATAL, "Real8 with pelist: mpp_sum differs from fortran intrinsic sum")
-    endif
-    deallocate(a4, b4, c4, a8, b8, c8)
   endif
+  if (pe .EQ. root) then
+    b4 = (/(i, i=1,npes-1, 1)/)
+    b8 = (/(i, i=1,npes-1, 1)/)
+    c4 = sum(b4)
+    c8 = sum(b8)
+    print *, 'b4: ',b4, 'a4: ',a4, 'c4: ',c4
+    if (a4(1) .ne. c4(1)) call mpp_error(FATAL, "Real4 with pelist: mpp_sum differs from fortran intrinsic sum")
+    if (a8(1) .ne. c8(1)) call mpp_error(FATAL, "Real8 with pelist: mpp_sum differs from fortran intrinsic sum")
+  endif
+  deallocate(a4, b4, c4, a8, b8, c8)
+
+  end subroutine test_mpp_sum_pelist
+
+  subroutine test_mpp_sum_large()
 
 ! Verify mpp_sum works for large array dim with random values
   n=30000
@@ -109,5 +130,7 @@ program test_mpp_sum
   call mpp_sync()
   call mpp_sum(a4(1:n),n/2)
   call mpp_sum(a8(1:n),n/2)
+
+  end subroutine test_mpp_sum_large
 
 end program test_mpp_sum
