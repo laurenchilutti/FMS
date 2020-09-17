@@ -27,18 +27,18 @@
 # Set common test settings.
 . ../test_common.sh
 # Run the test for one processor
-echo "Running test_mpp_update_domains with 1 pe"
-run_test test_mpp_update_domains 1
+echo "Running test_update_domains_performance with 1 pe"
+run_test test_update_domains_performance 1
 # If on a Linux system that uses the command `nproc`, run the test
 if [ $(command -v nproc) ]
  # Looks like a linux system
  then
    # Get the number of available CPUs on the system
    nProc=$(nproc)
-   if [ ${nProc} -ge 2 ]
+   if [ ${nProc} -ge 6 ]
      then
        # Run the test with 2 pes
-       echo "Running test_mpp_update_domains with 2 pes"
-       run_test test_mpp_update_domains 2
+       echo "Running test_update_domains_performance with 6 pes"
+       run_test test_update_domains_performance 6
    fi
 fi
