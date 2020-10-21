@@ -19,7 +19,8 @@
 
 !> @brief  This programs tests test_get_mosaic_tile_grid.
 program test_get_mosaic_tile_grid
-#ifndef use_mpp_io
+use   mpp_mod,         only: mpp_npes, mpp_pe, mpp_root_pe, mpp_error, FATAL
+use   mpp_domains_mod, only: domain2d, mpp_define_mosaic, mpp_define_io_domain
 use   fms2_io_mod,     only: get_mosaic_tile_grid
 use   fms_mod,         only: fms_init, fms_end
 use   netcdf,          only: nf90_create, nf90_def_dim, nf90_clobber, nf90_64bit_offset, &
@@ -120,5 +121,4 @@ call fms_end
 contains
 
 include "create_atmosphere_domain.inc"
-#endif
 end program
