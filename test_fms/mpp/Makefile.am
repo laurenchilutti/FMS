@@ -60,7 +60,7 @@ check_PROGRAMS = test_mpp \
   test_mpp_sendrecv \
   test_global_minmax \
   test_chksum_int   \
-  test_mpp_update_domains_ad
+  test_mpp_update_domains_ad \
   test_mpp_transmit
 
 # These are the sources for the tests.
@@ -132,7 +132,7 @@ TESTS = test_mpp_domains2.sh \
   test_minmax.sh \
   test_mpp_sendrecv.sh \
   test_chksum_int.sh  \
-  test_mpp_update_domains_ad.sh
+  test_mpp_update_domains_ad.sh \
   test_mpp_transmit.sh
 
 # These files will also be included in the distribution.
