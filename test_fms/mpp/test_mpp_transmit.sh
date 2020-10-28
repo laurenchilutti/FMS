@@ -28,4 +28,4 @@
 . ../test_common.sh
 
 # Run the test for 5 processors
-run_test test_mpp_transmit 5
+run_test test_mpp_transmit 6
