@@ -32,6 +32,7 @@ LDADD = ${top_builddir}/libFMS/libFMS.la
 check_PROGRAMS = test_mpp \
   test_mpp_domains \
   test_mpp_pset \
+  test_redistribute_int \
   test_mpp_memuse \
   test_mpp_mem_dump \
   test_mpp_memutils_begin_end \
@@ -103,10 +104,13 @@ test_minmax_SOURCES=test_minmax.F90
 test_mpp_update_domains_ad_SOURCES=test_mpp_update_domains_ad.F90 compare_data_checksums.F90
 test_global_minmax_SOURCES=test_global_minmax.F90
 test_chksum_int_SOURCES=test_chksum_int.F90
+test_redistribute_int_SOURCES=test_redistribute_int.F90
 test_mpp_transmit_SOURCES=test_mpp_transmit.F90
+
 
 # Run the test programs.
 TESTS = test_mpp_domains2.sh \
+  test_redistribute_int.sh \
   test_global_minmax.sh  \
   test_mpp_pset2.sh \
   test_mpp2.sh \
@@ -166,25 +170,37 @@ EXTRA_DIST = input_base.nml \
   test_mpp_sendrecv.sh \
   test_global_minmax.sh \
   test_chksum_int.sh   \
+  test_redistribute_int.sh \
   test_mpp_update_domains_ad.sh \
   test_mpp_transmit.sh
 
-compare_data_checksums.mod : compare_data_checksums.$(OBJEXT)
-compare_data_checksums_int.mod : compare_data_checksums_int.$(OBJEXT)
-fill_halo.mod : fill_halo.$(OBJEXT)
-test_mpp_update_domains_real.mod : test_mpp_update_domains_real.$(OBJEXT)
-test_mpp_update_domains_int.mod : test_mpp_update_domains_int.$(OBJEXT)
-test_mpp_update_domains_main.mod : test_mpp_update_domains_main.$(OBJEXT)
-test_domains_utility_mod.mod : test_domains_utility_mod.$(OBJEXT)
-test_mpp_update_domains_main.$(OBJEXT) : test_mpp_update_domains_real.mod test_mpp_update_domains_int.mod
-test_mpp_update_domains_real.$(OBJEXT) : fill_halo.mod compare_data_checksums.mod
-test_mpp_update_domains_int.$(OBJEXT) : fill_halo.mod compare_data_checksums_int.mod
-test_update_domains_performance.$(OBJEXT) : compare_data_checksums.mod compare_data_checksums_int.mod
-test_mpp_update_domains_ad.$(OBJEXT) : compare_data_checksums.mod
-test_mpp_domains.$(OBJEXT) : compare_data_checksums.mod test_domains_utility_mod.mod
+# Each mod file depends on the .lo (library object) file.
+compare_data_checksums.mod : compare_data_checksums.lo
+compare_data_checksums_int.mod : compare_data_checksums_int.lo
+fill_halo.mod : fill_halo.lo
+test_mpp_update_domains_real.mod : test_mpp_update_domains_real.lo
+test_mpp_update_domains_int.mod : test_mpp_update_domains_int.lo
+test_domains_utility_mod.mod : test_domains_utility_mod.lo
 
+# Some mods are dependant on other mods in this directory
+test_mpp_update_domains_main.lo : test_mpp_update_domains_real.mod test_mpp_update_domains_int.mod
+test_mpp_update_domains_real.lo : fill_halo.mod compare_data_checksums.mod
+test_mpp_update_domains_int.lo: fill_halo.mod compare_data_checksums_int.mod
+test_update_domains_performance.lo : compare_data_checksums.mod compare_data_checksums_int.mod
+test_mpp_update_domains_ad.lo : compare_data_checksums.mod
+test_mpp_domains.lo : compare_data_checksums.mod test_domains_utility_mod.mod
+
+# Mod files are built and then installed as headers.
+MODFILES = compare_data_checksums.mod \
+	compare_data_checksums_int.mod \
+	fill_halo.mod \
+	test_mpp_update_domains_real.mod \
+	test_mpp_update_domains_int.mod \
+	test_domains_utility_mod.mod
+BUILT_SOURCES = $(MODFILES)
+include_HEADERS = $(MODFILES)
 
 # Clean up
 CLEANFILES = input.nml input_alternative.nml input_blank.nml empty.nml *.out* *.tst* \
-	include_files_mod.mod ascii* test_numb* test_mpp_update_domains*.mod \
-        fill_halo.mod compare_data_checksums.mod test_domains_utility_mod.mod
+	           ascii* test_numb* *.mod
+
