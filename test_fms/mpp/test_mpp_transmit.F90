@@ -36,7 +36,7 @@ program test_mpp_transmit
   integer                                       :: ierr
   integer                                       :: pe, npes, root
 
-  call mpp_init(mpp_init_test_requests_allocated)
+  call mpp_init(test_level=mpp_init_test_requests_allocated)
   call mpp_set_stack_size(3145746)
   pe = mpp_pe()
   npes = mpp_npes()
