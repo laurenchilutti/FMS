@@ -149,16 +149,16 @@ contains
   subroutine test_mpp_transmit_i4_scalar(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i4_kind), dimension(1) :: a4, b4, c4
+    integer(kind=i4_kind), dimension(1) :: a4, b4, c4
 
     n=1
-    a4 = real(pe, kind=i4_kind)
+    a4 = int(pe, kind=i4_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a4(1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b4(1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c4 = real(modulo(int(a4(1))+npes-1,npes), kind=i4_kind)
+    c4 = int(modulo(a4(1)+npes-1,npes), kind=i4_kind)
     ! b4(1) should now equal the value of a4(1)from the "from_pe"
     if (b4(1) .NE. c4(1) ) call mpp_error(FATAL, "Test_mpp_transmit_i4_scalar: transmit didn't go as expected")
 
@@ -168,16 +168,16 @@ contains
   subroutine test_mpp_transmit_i8_scalar(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: i, n
-    real(kind=i8_kind), dimension(1) :: a8, b8, c8
+    integer(kind=i8_kind), dimension(1) :: a8, b8, c8
 
     n=1
-    a8 = real(pe, kind=i8_kind)
+    a8 = int(pe, kind=i8_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a8(1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b8(1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c8 = real(modulo(int(a8(1))+npes-1,npes), kind=i8_kind)
+    c8 = int(modulo(a8(1)+npes-1,npes), kind=i8_kind)
     ! b8(1) should now equal the value of a8(1)from the "from_pe"
     if (b8(1) .NE. c8(1) ) call mpp_error(FATAL, "Test_mpp_transmit_i8_scalar: transmit didn't go as expected")
 
@@ -235,16 +235,16 @@ contains
   subroutine test_mpp_transmit_i4_2D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i4_kind), dimension(1,1) :: a4, b4, c4
+    integer(kind=i4_kind), dimension(1,1) :: a4, b4, c4
 
     n=1
-    a4 = real(pe, kind=i4_kind)
+    a4 = int(pe, kind=i4_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a4(1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b4(1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c4 = real(modulo(int(a4(1,1))+npes-1,npes), kind=i4_kind)
+    c4 = int(modulo(a4(1,1)+npes-1,npes), kind=i4_kind)
     ! b4(1,1) should now equal the value of a4(1,1)from the "from_pe"
     if (b4(1,1) .NE. c4(1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i4_2D: transmit didn't go as expected")
 
@@ -254,16 +254,16 @@ contains
   subroutine test_mpp_transmit_i8_2D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i8_kind), dimension(1,1) :: a8, b8, c8
+    integer(kind=i8_kind), dimension(1,1) :: a8, b8, c8
 
     n=1
-    a8 = real(pe, kind=i8_kind)
+    a8 = int(pe, kind=i8_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a8(1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b8(1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c8 = real(modulo(int(a8(1,1))+npes-1,npes), kind=i8_kind)
+    c8 = int(modulo(a8(1,1)+npes-1,npes), kind=i8_kind)
     ! b8(1,1) should now equal the value of a8(1,1)from the "from_pe"
     if (b8(1,1) .NE. c8(1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i8_2D: transmit didn't go as expected")
 
@@ -323,16 +323,16 @@ contains
   subroutine test_mpp_transmit_i4_3D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i4_kind), dimension(1,1,1) :: a4, b4, c4
+    integer(kind=i4_kind), dimension(1,1,1) :: a4, b4, c4
 
     n=1
-    a4 = real(pe, kind=i4_kind)
+    a4 = int(pe, kind=i4_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a4(1,1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b4(1,1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c4 = real(modulo(int(a4(1,1,1))+npes-1,npes), kind=i4_kind)
+    c4 = int(modulo(a4(1,1,1)+npes-1,npes), kind=i4_kind)
     ! b4(1,1,1) should now equal the value of a4(1,1,1)from the "from_pe"
     if (b4(1,1,1) .NE. c4(1,1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i4_3D: transmit didn't go as expected")
 
@@ -342,17 +342,17 @@ contains
   subroutine test_mpp_transmit_i8_3D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i8_kind), dimension(1,1,1) :: a8, b8, c8
+    integer(kind=i8_kind), dimension(1,1,1) :: a8, b8, c8
 
     n=1
-    a8 = real(pe, kind=i8_kind)
+    a8 = int(pe, kind=i8_kind)
     call mpp_sync()
 
     !print *, "PE ",pe, ": a8=", a8(1,1,1)," b8=", b8(1,1,1)
     call mpp_transmit( put_data=a8(1,1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b8(1,1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c8 = real(modulo(int(a8(1,1,1))+npes-1,npes), kind=i8_kind)
+    c8 = int(modulo(a8(1,1,1)+npes-1,npes), kind=i8_kind)
     ! b8(1,1,1) should now equal the value of a8(1,1,1)from the "from_pe"
     if (b8(1,1,1) .NE. c8(1,1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i8_3D: transmit didn't go as expected")
 
@@ -410,16 +410,16 @@ contains
   subroutine test_mpp_transmit_i4_4D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i4_kind), dimension(1,1,1,1) :: a4, b4, c4
+    integer(kind=i4_kind), dimension(1,1,1,1) :: a4, b4, c4
 
     n=1
-    a4 = real(pe, kind=i4_kind)
+    a4 = int(pe, kind=i4_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a4(1,1,1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b4(1,1,1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c4 = real(modulo(int(a4(1,1,1,1))+npes-1,npes), kind=i4_kind)
+    c4 = int(modulo(a4(1,1,1,1)+npes-1,npes), kind=i4_kind)
     ! b4(1,1,1,1) should now equal the value of a4(1,1,1,1)from the "from_pe"
     if (b4(1,1,1,1) .NE. c4(1,1,1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i4_4D: transmit didn't go as expected")
 
@@ -429,16 +429,16 @@ contains
   subroutine test_mpp_transmit_i8_4D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i8_kind), dimension(1,1,1,1) :: a8, b8, c8
+    integer(kind=i8_kind), dimension(1,1,1,1) :: a8, b8, c8
 
     n=1
-    a8 = real(pe, kind=i8_kind)
+    a8 = int(pe, kind=i8_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a8(1,1,1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b8(1,1,1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c8 = real(modulo(int(a8(1,1,1,1))+npes-1,npes), kind=i8_kind)
+    c8 = int(modulo(a8(1,1,1,1)+npes-1,npes), kind=i8_kind)
     ! b8(1,1,1,1) should now equal the value of a8(1,1,1,1)from the "from_pe"
     if (b8(1,1,1,1) .NE. c8(1,1,1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i8_4D: transmit didn't go as expected")
 
@@ -496,16 +496,16 @@ contains
   subroutine test_mpp_transmit_i4_5D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i4_kind), dimension(1,1,1,1,1) :: a4, b4, c4
+    integer(kind=i4_kind), dimension(1,1,1,1,1) :: a4, b4, c4
 
     n=1
-    a4 = real(pe, kind=i4_kind)
+    a4 = int(pe, kind=i4_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a4(1,1,1,1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b4(1,1,1,1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c4 = real(modulo(int(a4(1,1,1,1,1))+npes-1,npes), kind=i4_kind)
+    c4 = int(modulo(a4(1,1,1,1,1)+npes-1,npes), kind=i4_kind)
     ! b4(1,1,1,1,1) should now equal the value of a4(1,1,1,1,1)from the "from_pe"
     if (b4(1,1,1,1,1) .NE. c4(1,1,1,1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i4_5D: transmit didn't go as expected")
 
@@ -515,16 +515,16 @@ contains
   subroutine test_mpp_transmit_i8_5D(npes,pe,root)
     integer, intent(in) :: npes, pe, root
     integer :: n
-    real(kind=i8_kind), dimension(1,1,1,1,1) :: a8, b8, c8
+    integer(kind=i8_kind), dimension(1,1,1,1,1) :: a8, b8, c8
 
     n=1
-    a8 = real(pe, kind=i8_kind)
+    a8 = int(pe, kind=i8_kind)
     call mpp_sync()
 
     call mpp_transmit( put_data=a8(1,1,1,1,1), plen=n, to_pe=modulo(pe+1, npes), &
                        get_data=b8(1,1,1,1,1), glen=n, from_pe=modulo(npes+pe-1, npes) )
     call mpp_sync_self()
-    c8 = real(modulo(int(a8(1,1,1,1,1))+npes-1,npes), kind=i8_kind)
+    c8 = int(modulo(a8(1,1,1,1,1)+npes-1,npes), kind=i8_kind)
     ! b8(1,1,1,1,1) should now equal the value of a8(1,1,1,1,1)from the "from_pe"
     if (b8(1,1,1,1,1) .NE. c8(1,1,1,1,1) ) call mpp_error(FATAL, "Test_mpp_transmit_i8_5D: transmit didn't go as expected")
 
