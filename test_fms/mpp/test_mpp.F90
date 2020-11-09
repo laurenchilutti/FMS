@@ -22,32 +22,20 @@
 
 program test   !test various aspects of mpp_mod
 
-#ifdef sgi_mipspro
-  use shmem_interface
-#endif
-
   use mpp_mod, only : mpp_init, mpp_exit, mpp_pe, mpp_npes, mpp_root_pe, stdout
-  use mpp_mod, only : mpp_clock_id, mpp_clock_begin, mpp_clock_end, mpp_sync, mpp_malloc
+  use mpp_mod, only : mpp_clock_id, mpp_clock_begin, mpp_clock_end, mpp_sync
   use mpp_mod, only : mpp_declare_pelist, mpp_set_current_pelist, mpp_set_stack_size
   use mpp_mod, only : mpp_broadcast, mpp_transmit, mpp_sum, mpp_max, mpp_chksum, ALL_PES
   use mpp_mod, only : mpp_gather, mpp_error, FATAL, mpp_sync_self
   use mpp_io_mod, only: mpp_io_init, mpp_flush
-#ifdef use_MPI_GSM
-  use mpp_mod, only : mpp_gsm_malloc, mpp_gsm_free
-#endif
   use platform_mod
 
   implicit none
 
   integer, parameter              :: n=1048576
   real, allocatable, dimension(:) :: a, b, c
-#ifdef use_MPI_GSM
-  real                            :: d(n)
-  pointer (locd, d)
-#else
   real, allocatable, dimension(:) :: d
   integer(i8_kind) :: locd
-#endif
   integer                         :: tick, tick0, ticks_per_sec, id
   integer                         :: pe, npes, root, i, j, k, l, m, n2, istat
   integer                         :: out_unit
@@ -62,9 +50,6 @@ program test   !test various aspects of mpp_mod
   out_unit = stdout()
 
   call SYSTEM_CLOCK( count_rate=ticks_per_sec )
-  if( pe.EQ.root ) print *, '------------------> Calling test_time_transmit <------------------'
-    call test_time_transmit()
-  if( pe.EQ.root ) print *, '------------------> Finished test_time_transmit <------------------'
 
   if( pe.EQ.root ) print *, '------------------> Calling test_mpp_max <------------------'
     call test_mpp_max()
@@ -75,67 +60,28 @@ program test   !test various aspects of mpp_mod
   if( pe.EQ.root ) print *, '------------------> Finished test_mpp_chksum <------------------'
 
 !test of pointer sharing
-#ifdef use_MPI_GSM
-      call mpp_gsm_malloc( locd, sizeof(d) )
-#else
   if( pe.EQ.root )then
       allocate( d(n) )
       locd = LOC(d)
   end if
   call mpp_broadcast(locd,root)
-#endif
   if( pe.EQ.root )then
       call random_number(d)
   end if
   call mpp_sync()
 !  call test_shared_pointers(locd,n)
 
-#ifdef use_MPI_GSM
-  call mpp_gsm_free( locd )
-#else
   if( pe.EQ.root )then
       deallocate( d )
   end if
-#endif
-
 
   call mpp_exit()
 
 contains
 
-  subroutine test_time_transmit()
-
-  allocate( a(n), b(n) )
-  id = mpp_clock_id( 'Random number' )
-  call mpp_clock_begin(id)
-  call random_number(a)
-  call mpp_clock_end  (id)
-
-  id = mpp_clock_id( 'mpp_transmit' )
-  call mpp_clock_begin(id)
-  !timing is done for cyclical pass (more useful than ping-pong etc)
-  l = n
-  do while( l.GT.0 )
-     !--- mpp_transmit -------------------------------------------------
-     call mpp_sync()
-     call SYSTEM_CLOCK(tick0)
-     do i = 1,npes
-        call mpp_transmit( put_data=a(1), plen=l, to_pe=modulo(pe+npes-i,npes), &
-                           get_data=b(1), glen=l, from_pe=modulo(pe+i,npes) )
-        call mpp_sync_self()
-     end do
-     call mpp_sync()
-     call SYSTEM_CLOCK(tick)
-     dt = real(tick-tick0)/(npes*ticks_per_sec)
-     dt = max( dt, epsilon(dt) )
-     if( pe.EQ.root ) print *, 'MPP_TRANSMIT length, time, bw(Mb/s)=', l, dt, l*8e-6/dt
-     l = l/2
-  end do
-
-  end subroutine test_time_transmit
-
   subroutine test_mpp_max
 
+  allocate( a(n), b(n) )
   a = real(pe+1)
   print *, 'pe,     pe+1 =', pe, a(1)
   call mpp_max( a(1) )

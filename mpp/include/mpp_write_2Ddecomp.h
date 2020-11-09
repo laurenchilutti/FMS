@@ -130,20 +130,16 @@
 !write time information if new time
           if( newtime )then
               if( KIND(time).EQ.r8_kind )then
-                  error = NF_PUT_VAR1_DOUBLE( mpp_file(unit)%ncid, mpp_file(unit)%id, mpp_file(unit)%time_level, time )
+                  error = NF_PUT_VAR1_DOUBLE( mpp_file(unit)%ncid, mpp_file(unit)%id, mpp_file(unit:unit)%time_level, time )
               else if( KIND(time).EQ.r4_kind )then
-                  error = NF_PUT_VAR1_REAL  ( mpp_file(unit)%ncid, mpp_file(unit)%id, mpp_file(unit)%time_level, time )
+                 error = NF90_PUT_VAR ( mpp_file(unit)%ncid, mpp_file(unit)%id, time)
               end if
           end if
           if( field%pack == 0 )then
               packed_data = CEILING(data)
               error = NF_PUT_VARA_INT   ( mpp_file(unit)%ncid, field%id, start, axsiz, packed_data )
           elseif( field%pack.GT.0 .and. field%pack.LE.2 )then
-              if( KIND(data).EQ.r8_kind )then
-                  error = NF_PUT_VARA_DOUBLE( mpp_file(unit)%ncid, field%id, start, axsiz, data )
-              else if( KIND(data).EQ.r4_kind )then
-                  error = NF_PUT_VARA_REAL  ( mpp_file(unit)%ncid, field%id, start, axsiz, data )
-              end if
+              error = NF90_PUT_VAR      ( mpp_file(unit)%ncid, field%id, data, start=start, count=axsiz )
           else              !convert to integer using scale and add: no error check on packed data representation
               packed_data = nint((data-field%add)/field%scale)
               error = NF_PUT_VARA_INT   ( mpp_file(unit)%ncid, field%id, start, axsiz, packed_data )
@@ -449,3 +445,4 @@
 
       return
     end subroutine MPP_WRITE_2DDECOMP_4D_
+

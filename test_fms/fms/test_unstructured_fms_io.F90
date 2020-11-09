@@ -46,11 +46,14 @@ program test_unstructured_fms_io
                                             fms_io_exit
     use platform_mod
 
-    implicit none
-
 #ifdef use_netCDF
-#include <netcdf.inc>
+    use netcdf
+    use netcdf_nf_data
+    use netcdf_nf_interfaces
+    use netcdf4_nf_interfaces
 #endif
+
+    implicit none
 
    !Local variables
     integer(i4_kind)              :: nx = 8                               !<Total number of grid points in the x-dimension (longitude?)
@@ -97,7 +100,6 @@ program test_unstructured_fms_io
                                         stackmaxd, &
                                         debug, &
                                         test_file, &
-                                        iospec, &
                                         ntiles_x, &
                                         ntiles_y, &
                                         layout, &
