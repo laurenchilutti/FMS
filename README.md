@@ -1,5 +1,5 @@
 \page rm General Project Information
-# Modeling Framework: Flexible Modeling System (FMS)
+# Mng Framework: Flexible Modeling System (FMS)
 
 Today’s climate models simulate highly complex systems. In response to
 increasingly complex models, the climate community has developed tools and
