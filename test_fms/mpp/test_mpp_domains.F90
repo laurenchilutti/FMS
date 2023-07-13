@@ -278,7 +278,6 @@ program test_mpp_domains
   if( check_parallel) then
       if (mpp_pe() == mpp_root_pe())  print *, '--------------------> Calling test_check_parallel <-------------------'
      call test_parallel_3D( )
-     print *, "LEC: finished test_parallel_3D"
      call test_parallel_2D( )
       if (mpp_pe() == mpp_root_pe())  print *, '--------------------> Finish test_check_parallel <-------------------'
   endif
@@ -6176,18 +6175,13 @@ end subroutine test_halosize_update
     npes = mpp_npes()
     allocate(pelist1(npes-mpes), pelist2(mpes))
     pelist1 = (/(i, i = 0, npes-mpes -1)/)
-    print *, "pelist1: ", pelist1
     pelist2 = (/(i, i = npes-mpes, npes - 1)/)
-    print *, "pelist2: ", pelist2
     call mpp_declare_pelist(pelist1)
     call mpp_declare_pelist(pelist2)
     group1 = .FALSE. ; group2 = .FALSE.
     if(any(pelist1==pe)) group1 = .TRUE.
     if(any(pelist2==pe)) group2 = .TRUE.
     mesg = 'parallel checking'
-
-    print *, "pe ", mpp_pe(), ": group1 = ", group1
-    print *, "pe ", mpp_pe(), ": group2 = ", group2
 
     if(group1) then
        call mpp_set_current_pelist(pelist1)
@@ -6214,13 +6208,8 @@ end subroutine test_halosize_update
     field(is:ie,js:je)= lfield(is:ie,js:je)
     call mpp_update_domains(field,domain)
 
-
-    print *, "pe ", mpp_pe(), ": got to line 6218 before call mpp_check_field"
-
     call mpp_check_field(field, pelist1, pelist2, domain, '2D '//mesg, w_halo = whalo, &
                            s_halo = shalo, e_halo = ehalo, n_halo = nhalo)
-
-    print *, "pe ", mpp_pe(), ": got to line 6224"
   end subroutine test_parallel_2D
 
   subroutine test_parallel_3D
