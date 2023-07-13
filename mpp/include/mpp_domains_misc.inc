@@ -241,6 +241,7 @@ end subroutine init_nonblock_type
         call mpp_check_field_2d_type1(field_in, pelist2, pelist1, domain, mesg, &
                                       w_halo, s_halo, e_halo, n_halo, force_abort )
      else if(size(pelist1(:)) .gt. 1 .and. size(pelist2(:)) .gt. 1) then
+        print *, "pelist1 and pelist2 gt 1 so use mpp_check_field_2d_type2"
         call mpp_check_field_2d_type2(field_in, pelist1, pelist2, domain, mesg, force_abort )
      else
         call mpp_error(FATAL, 'mpp_check_field: size of both pelists should be greater than 0')
@@ -419,12 +420,15 @@ end subroutine init_nonblock_type
       field2(isd:ied, jsd:jed) = field_in(:,:)
     endif
 
+
 !  broadcast domain
     call mpp_broadcast_domain(domain1)
     call mpp_broadcast_domain(domain2)
 
+    print*, "pe ", mpp_pe(), ": got to mpp_domains_misc.inc mpp_check_field_2d_type2 line 430 before mpp_redistribute"
     call mpp_redistribute(domain1,field_in,domain2,field1)
 
+    print*, "pe ", mpp_pe(), ": got to mpp_domains_misc.inc line 433"
     if(any(pelist2 == pe)) then
         do i =is,ie
         do j =js,je
@@ -434,6 +438,7 @@ end subroutine init_nonblock_type
              check_success = .FALSE.
              if(error_exit) call mpp_error(FATAL,"mpp_check_field: can not reproduce at this point")
           endif
+          print*, "pe ", mpp_pe(), ": got to mpp_domains_misc.inc line 443"
         enddo
         enddo
         if(check_success) &

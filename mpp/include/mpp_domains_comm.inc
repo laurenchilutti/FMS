@@ -185,25 +185,35 @@
          end if
       end do
 
-      d_comm%isize_max = isize_in; call mpp_max(d_comm%isize_max)
+      d_comm%isize_max = isize_in
+      print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 200"
+      call mpp_max(d_comm%isize_max)
+      print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 202"
       d_comm%jsize_max = jsize_in; call mpp_max(d_comm%jsize_max)
 
+      print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 205"
     ! Handles case where S_msize and/or R_msize are 0 size array
       msgsize = ( MAXVAL( (/0,sum(d_comm%S_msize(:))/) ) + MAXVAL( (/0,sum(d_comm%R_msize(:))/) ) ) * list_size
+      print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 208"
       if(msgsize>0)then
          mpp_domains_stack_hwm = max( mpp_domains_stack_hwm, msgsize )
+         print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 211"
          if( mpp_domains_stack_hwm.GT.mpp_domains_stack_size )then
+             print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 213"
              write( text,'(i8)' )mpp_domains_stack_hwm
              call mpp_error( FATAL, &
                   & 'MPP_REDISTRIBUTE_INIT_COMM: mpp_domains_stack overflow, call mpp_domains_set_stack_size(' &
                   & //trim(text)//') from all PEs.' )
          end if
+         print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 219"
       end if
 
+      print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 222"
       DEALLOCATE(slist_addr,isL,jsL)
 
       d_comm%initialized = .true.
 
+      print *, "pe ", mpp_pe(), ": got to mpp_domains_comm.inc mpp_redistribute_init_comm line 227"
     end function mpp_redistribute_init_comm
 
     !> initializes a @ref DomainCommunicator2D type for use in @ref mpp_global_field

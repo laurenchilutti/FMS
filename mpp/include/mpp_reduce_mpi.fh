@@ -23,15 +23,20 @@
       integer, intent(in), optional :: pelist(0:)
       integer :: n
       MPP_TYPE_ :: work
-
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_mpi.fh MPP_REDUCE_0D_ line 26"
       if( .NOT.module_is_initialized )call mpp_error( FATAL, 'MPP_REDUCE_0D: You must first call mpp_init.' )
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_mpi.fh MPP_REDUCE_0D_ line 28"
       n = get_peset(pelist); if( peset(n)%count.EQ.1 )return
 
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_mpi.fh MPP_REDUCE_0D_ line 31"
       if( debug .and. (current_clock.NE.0) )call SYSTEM_CLOCK(start_tick)
       if( verbose )call mpp_error( NOTE, 'MPP_REDUCE_0D_: using MPI_ALLREDUCE...' )
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_mpi.fh MPP_REDUCE_0D_ line 34"
       call MPI_ALLREDUCE( a, work, 1, MPI_TYPE_, MPI_REDUCE_, peset(n)%id, error )
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_mpi.fh MPP_REDUCE_0D_ line 36"
       a = work
       if( debug .and. (current_clock.NE.0) )call increment_current_clock( EVENT_ALLREDUCE, MPP_TYPE_BYTELEN_ )
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_mpi.fh MPP_REDUCE_0D_ line 39"
       return
     end subroutine MPP_REDUCE_0D_
 

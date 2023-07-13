@@ -231,14 +231,19 @@
       pointer( ptr_in,  field3D_in  )
       pointer( ptr_out, field3D_out )
 
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_2D_ line 234"
       field_out = 0
       ptr_in = 0
       ptr_out = 0
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_2D_ line 238"
       if(domain_in%initialized) ptr_in  = LOC(field_in )
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_2D_ line 240"
       if(domain_out%initialized) ptr_out = LOC(field_out)
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_2D_ line 242"
       call mpp_redistribute( domain_in, field3D_in, domain_out, field3D_out, complete, free, list_size, &
                            &  dc_handle, position )
 
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_2D_ line 246"
       return
     end subroutine MPP_REDISTRIBUTE_2D_
 
@@ -264,6 +269,7 @@
       MPP_TYPE_ :: d_type
       integer(i8_kind) :: floc_in, floc_out
 
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 270"
       floc_in = 0
       floc_out = 0
       if(domain_in%initialized) floc_in = LOC(field_in)
@@ -274,9 +280,11 @@
               'MPP_REDISTRIBUTE_3Dold_: only position = CENTER is implemented, contact author')
       endif
 
+      print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 281"
       do_redist=.true.; if(PRESENT(complete))do_redist=complete
       free_comm=.false.; if(PRESENT(free))free_comm=free
       if(free_comm)then
+         print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 285"
          l_addrs_in(1) = floc_in; l_addrs_out(1) = floc_out
          if(l_addrs_out(1)>0)then
             ke = size(field_out,3)
@@ -286,6 +294,7 @@
          lsize=1; if(PRESENT(list_size))lsize=list_size
          call mpp_redistribute_free_comm(domain_in,l_addrs_in(1),domain_out,l_addrs_out(1),ke,lsize)
       else
+         print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 295"
          l_size = l_size+1
          if(l_size > MAX_DOMAIN_FIELDS)then
             write( text,'(i2)' ) MAX_DOMAIN_FIELDS
@@ -293,6 +302,7 @@
          end if
          l_addrs_in(l_size) = floc_in; l_addrs_out(l_size) = floc_out
          if(l_size == 1)then
+            print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 303"
             if(l_addrs_in(l_size) > 0)then
                isize_in=size(field_in,1); jsize_in=size(field_in,2); ke_in = size(field_in,3)
             end if
@@ -300,6 +310,7 @@
                isize_out=size(field_out,1); jsize_out=size(field_out,2); ke_out = size(field_out,3)
             endif
          else
+            print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 311"
             set_mismatch = .false.
             set_mismatch = l_addrs_in(l_size) == 0 .AND. l_addrs_in(l_size-1) /= 0
             set_mismatch = set_mismatch .OR. (l_addrs_in(l_size) > 0 .AND. l_addrs_in(l_size-1) == 0)
@@ -321,14 +332,20 @@
                               & text//' for group redistribute.' )
             endif
          endif
+         print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 331 and do_redist is ", do_redist
          if(do_redist)then
             if(PRESENT(dc_handle))d_comm =>dc_handle  ! User has kept pointer to d_comm
+            print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 338"
             if(.not.ASSOCIATED(d_comm))then  ! d_comm needs initialization or lookup
+               print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 340"
                d_comm =>mpp_redistribute_init_comm(domain_in,l_addrs_in(1:l_size),domain_out,l_addrs_out(1:l_size), &
                     isize_in,jsize_in,ke_in,isize_out,jsize_out,ke_out)
+               print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 343"
                if(PRESENT(dc_handle))dc_handle =>d_comm  ! User wants to keep pointer to d_comm
             endif
+            print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 344"
             call mpp_do_redistribute( l_addrs_in(1:l_size), l_addrs_out(1:l_size), d_comm, d_type )
+            print *, "pe ", mpp_pe(), ": got to mpp_update_domains2D.fh MPP_REDISTRIBUTE_3D_ line 346"
             l_size=0; l_addrs_in=-9999; l_addrs_out=-9999
             isize_in=0;  jsize_in=0;  ke_in=0
             isize_out=0; jsize_out=0; ke_out=0

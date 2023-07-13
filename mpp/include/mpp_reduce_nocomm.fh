@@ -22,6 +22,7 @@
       MPP_TYPE_, intent(inout) :: a
       integer, intent(in), optional :: pelist(0:)
       integer :: n
+      print *, "pe ", mpp_pe(), ": got to mpp_reduce_nocomm.fh MPP_REDUCE_0D_ line 25"
       if( .NOT.module_is_initialized )call mpp_error( FATAL, 'MPP_REDUCE_0D: You must first call mpp_init.' )
       return
     end subroutine MPP_REDUCE_0D_
