@@ -374,6 +374,7 @@ subroutine mpp_define_nest_domains(nest_domain, domain, num_nest, nest_level, ti
 !!!! END DEBUG CODE
         call mpp_broadcast_domain(nest_domain%nest(l)%domain_fine, nest_domain%nest(l)%tile_fine)
         call mpp_broadcast_domain(nest_domain%nest(l)%domain_coarse, my_tile_coarse)
+	print *, "PE : ", mpp_pe(), "before define_nest_level_type"
         call define_nest_level_type(nest_domain%nest(l), x_refine(l), y_refine(l), extra_halo_local)
      endif
   enddo
@@ -477,6 +478,7 @@ subroutine define_nest_level_type(nest_domain, x_refine, y_refine, extra_halo)
   npes = size(nest_domain%pelist(:))
   npes_coarse = size(nest_domain%domain_coarse%list(:))
   npes_fine = size(nest_domain%domain_fine%list(:))
+  print *, "PE : ", mpp_pe(), "npes_fine = ", npes_fine
   !--- pes_fine and pes_coarse should be subset of pelist
   allocate( pes_coarse(npes_coarse) )
   allocate( pes_fine  (npes_fine  ) )
@@ -492,12 +494,13 @@ subroutine define_nest_level_type(nest_domain, x_refine, y_refine, extra_halo)
         call mpp_error(FATAL, "mpp_define_nest_domains.inc: pelist_fine is not subset of pelist")
      endif
   enddo
-
+  print *, "def_type: PE : ", mpp_pe(), "associated(nest_domain%pelist_fine) = ", associated(nest_domain%pelist_fine)
   if (associated(nest_domain%pelist_fine)) deallocate(nest_domain%pelist_fine) !< Check if allocated
   allocate(nest_domain%pelist_fine(npes_fine))
   if (associated(nest_domain%pelist_coarse)) deallocate(nest_domain%pelist_coarse) !< Check if allocated
   allocate(nest_domain%pelist_coarse(npes_coarse))
   nest_domain%pelist_fine = pes_fine
+  print *, "def_type after: PE : ", mpp_pe(), "associated(nest_domain%pelist_fine) = ", associated(nest_domain%pelist_fine)
   nest_domain%pelist_coarse = pes_coarse
   if( nest_domain%is_fine_pe .neqv. ANY(pes_fine(:) == mpp_pe()) ) then
      call mpp_error(FATAL, "mpp_define_nest_domains.inc: nest_domain%is_fine_pe .neqv. ANY(pes_fine(:) == mpp_pe())")

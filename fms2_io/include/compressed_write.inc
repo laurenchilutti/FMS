@@ -137,6 +137,19 @@ subroutine compressed_write_1d(fileobj, variable_name, cdata, unlim_dim_level, &
       class default
         call error("unsupported variable type: "//trim(append_error_msg))
      end select
+  else
+     select type(cdata)
+      type is (integer(kind=i4_kind))
+        call allocate_array(buf_i4_kind, [1])
+      type is (integer(kind=i8_kind))
+        call allocate_array(buf_i8_kind, [1])
+      type is (real(kind=r4_kind))
+        call allocate_array(buf_r4_kind, [1])
+      type is (real(kind=r8_kind))
+        call allocate_array(buf_r8_kind, [1])
+      class default
+        call error("unsupported variable type: "//trim(append_error_msg))
+     end select
   endif
 
   !Gather the data onto the I/O root and write it out.
@@ -164,12 +177,10 @@ subroutine compressed_write_1d(fileobj, variable_name, cdata, unlim_dim_level, &
     class default
       call error("unsupported variable type: "//trim(append_error_msg))
   end select
-  if (fileobj%is_root) then
-    if (allocated(buf_i4_kind)) deallocate(buf_i4_kind)
-    if (allocated(buf_i8_kind)) deallocate(buf_i8_kind)
-    if (allocated(buf_r4_kind)) deallocate(buf_r4_kind)
-    if (allocated(buf_r8_kind)) deallocate(buf_r8_kind)
-  endif
+  if (allocated(buf_i4_kind)) deallocate(buf_i4_kind)
+  if (allocated(buf_i8_kind)) deallocate(buf_i8_kind)
+  if (allocated(buf_r4_kind)) deallocate(buf_r4_kind)
+  if (allocated(buf_r8_kind)) deallocate(buf_r8_kind)
 end subroutine compressed_write_1d
 
 
@@ -243,6 +254,19 @@ subroutine compressed_write_2d(fileobj, variable_name, cdata, unlim_dim_level, &
       class default
         call error("unsupported variable type: "//trim(append_error_msg))
      end select
+  else
+     select type(cdata)
+      type is (integer(kind=i4_kind))
+        call allocate_array(buf_i4_kind, [1,1])
+      type is (integer(kind=i8_kind))
+        call allocate_array(buf_i8_kind, [1,1])
+      type is (real(kind=r4_kind))
+        call allocate_array(buf_r4_kind, [1,1])
+      type is (real(kind=r8_kind))
+        call allocate_array(buf_r8_kind, [1,1])
+      class default
+        call error("unsupported variable type: "//trim(append_error_msg))
+     end select
   endif
 
   c(:) = 1
@@ -284,12 +308,10 @@ subroutine compressed_write_2d(fileobj, variable_name, cdata, unlim_dim_level, &
       call error("unsupported variable type: "//trim(append_error_msg))
   end select
 
-  if (fileobj%is_root) then
-    if (allocated(buf_i4_kind)) deallocate(buf_i4_kind)
-    if (allocated(buf_i8_kind)) deallocate(buf_i8_kind)
-    if (allocated(buf_r4_kind)) deallocate(buf_r4_kind)
-    if (allocated(buf_r8_kind)) deallocate(buf_r8_kind)
-  endif
+  if (allocated(buf_i4_kind)) deallocate(buf_i4_kind)
+  if (allocated(buf_i8_kind)) deallocate(buf_i8_kind)
+  if (allocated(buf_r4_kind)) deallocate(buf_r4_kind)
+  if (allocated(buf_r8_kind)) deallocate(buf_r8_kind)
 end subroutine compressed_write_2d
 
 
@@ -367,6 +389,19 @@ subroutine compressed_write_3d(fileobj, variable_name, cdata, unlim_dim_level, &
       class default
         call error("unsupported variable type: "//trim(append_error_msg))
      end select
+  else
+     select type(cdata)
+      type is (integer(kind=i4_kind))
+        call allocate_array(buf_i4_kind, [1,1,1])
+      type is (integer(kind=i8_kind))
+        call allocate_array(buf_i8_kind, [1,1,1])
+      type is (real(kind=r4_kind))
+        call allocate_array(buf_r4_kind, [1,1,1])
+      type is (real(kind=r8_kind))
+        call allocate_array(buf_r8_kind, [1,1,1])
+      class default
+        call error("unsupported variable type: "//trim(append_error_msg))
+     end select
   endif
 
   c(:) = 1
@@ -412,12 +447,10 @@ subroutine compressed_write_3d(fileobj, variable_name, cdata, unlim_dim_level, &
       call error("unsupported variable type: "//trim(append_error_msg))
   end select
 
-  if (fileobj%is_root) then
-    if (allocated(buf_i4_kind)) deallocate(buf_i4_kind)
-    if (allocated(buf_i8_kind)) deallocate(buf_i8_kind)
-    if (allocated(buf_r4_kind)) deallocate(buf_r4_kind)
-    if (allocated(buf_r8_kind)) deallocate(buf_r8_kind)
-  endif
+  if (allocated(buf_i4_kind)) deallocate(buf_i4_kind)
+  if (allocated(buf_i8_kind)) deallocate(buf_i8_kind)
+  if (allocated(buf_r4_kind)) deallocate(buf_r4_kind)
+  if (allocated(buf_r8_kind)) deallocate(buf_r8_kind)
 end subroutine compressed_write_3d
 
 

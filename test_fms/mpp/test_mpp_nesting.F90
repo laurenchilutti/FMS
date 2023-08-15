@@ -947,9 +947,11 @@ program test_mpp_nesting
              jcount_coarse(1:num_nest), npes_nest_tile(1:ntiles_nest_all), &
              x_refine(1:num_nest), y_refine(1:num_nest), extra_halo=extra_halo, name="nest_domain")
 
+    print *, "immediately after mpp_define: PE : ", mpp_pe(), " associated(nest_domain%nest(1)%pelist_fine): ", associated(nest_domain%nest(1)%pelist_fine)
     !--- loop over nest level
     do l = 1, num_nest_level
        npes_my_level = mpp_get_nest_npes(nest_domain, l)
+       print *, "PE : ", mpp_pe(), " associated(nest_domain%nest(l)%pelist_fine): ", associated(nest_domain%nest(l)%pelist_fine)
        npes_my_fine = mpp_get_nest_fine_npes(nest_domain,l)
        allocate(my_pelist(npes_my_level))
        allocate(my_pelist_fine(npes_my_fine))

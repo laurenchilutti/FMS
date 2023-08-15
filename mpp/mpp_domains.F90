@@ -463,7 +463,6 @@ module mpp_domains_mod
   !> Private type to hold data for each level of nesting
   !> @ingroup mpp_domains_mod
   type :: nest_level_type
-     private
      logical                    :: on_level
      logical                    :: is_fine, is_coarse
      integer                    :: num_nest
