@@ -77,12 +77,12 @@ SUBDIRS = \
 # Run the Fortran preprocessor on every .F90 file in PREPROCESS_DIRS,
 # writing output to preprocessed/<dir>/<file>.F90. test_fms is excluded.
 preprocess:
-	for dir in $(top_srcdir)/$(SUBDIRS); do \
-	  for f in $$dir/*.F90; do \
+	for dir in $(SUBDIRS); do \
+	  for f in $(top_srcdir)/$$dir/*.F90; do \
 	    [ -e "$$f" ] || continue; \
 	    outdir=$(top_srcdir)/docs/preprocessed/$$dir; \
 	    $(MKDIR_P) $$outdir; \
-	    $(CPP) -Duse_yaml -I$$dir -I$$dir/include -I$(top_srcdir)/include $$f -o $$outdir/`basename $$f`; \
+	    $(FPP) -Duse_yaml -I${top_srcdir}/$$dir -I${top_srcdir}/$$dir/include -I$(top_srcdir)/include $$f > $$outdir/`basename $$f`; \
 	  done \
 	done
 
